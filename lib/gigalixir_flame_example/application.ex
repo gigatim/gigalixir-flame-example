@@ -7,9 +7,11 @@ defmodule GigalixirFlameExample.Application do
 
   @impl true
   def start(_type, _args) do
+    topologies = Application.get_env(:libcluster, :topologies) || []
+
     children = [
       GigalixirFlameExampleWeb.Telemetry,
-      {DNSCluster, query: Application.get_env(:gigalixir_flame_example, :dns_cluster_query) || :ignore},
+      {Cluster.Supervisor, [topologies, [name: GigalixirFlameExample.ClusterSupervisor]]},
       {Phoenix.PubSub, name: GigalixirFlameExample.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: GigalixirFlameExample.Finch},

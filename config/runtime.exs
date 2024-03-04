@@ -99,4 +99,13 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  ## Clustering
+  config :libcluster,
+    topologies: [
+      k8s_example: [
+        strategy: Cluster.Strategy.Kubernetes,
+        config: [
+          kubernetes_selector: System.get_env("LIBCLUSTER_KUBERNETES_SELECTOR"),
+          kubernetes_node_basename: System.get_env("LIBCLUSTER_KUBERNETES_NODE_BASENAME")]]]
 end
