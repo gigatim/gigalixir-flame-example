@@ -17,7 +17,7 @@ defmodule GigalixirFlameExampleWeb.Router do
   scope "/", GigalixirFlameExampleWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", LiveExample
   end
 
   # Other scopes may use custom stacks.
