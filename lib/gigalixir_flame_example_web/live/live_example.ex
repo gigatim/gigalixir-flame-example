@@ -29,14 +29,14 @@ defmodule GigalixirFlameExampleWeb.LiveExample do
   end
 
   def handle_info({:do_job, requester}, socket) do
-    {:ok, processor} = process_job()
+    {:ok, processor, from_flame} = process_job()
 
     IO.puts("Job completed")
 
     new_result = [
       "completed: #{Time.to_string(Time.utc_now())}",
       "requester: #{requester}", 
-      "processor: #{processor}",
+      "processor: #{processor} #{from_flame && "(FLAME)" || "(not FLAME)"}",
       "finisher: #{Node.self()}",
     ]
     previous_results = socket.assigns.results
@@ -46,13 +46,15 @@ defmodule GigalixirFlameExampleWeb.LiveExample do
   end
 
   defp process_job() do
-    IO.puts("Running Job")
+    FLAME.call(GigalixirFlameExample.FlameWorker, fn ->
+      IO.puts("Running Job")
 
-    # faking the work effort
-    Process.sleep(2_000)
+      # faking the work effort
+      Process.sleep(2_000)
 
-    IO.puts("Job done")
+      IO.puts("Job done")
 
-    {:ok, Node.self()}
+      {:ok, Node.self(), FLAME.Parent.get() != nil}
+    end)
   end
 end

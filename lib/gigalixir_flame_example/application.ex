@@ -7,19 +7,23 @@ defmodule GigalixirFlameExample.Application do
 
   @impl true
   def start(_type, _args) do
+    flame_parent = FLAME.Parent.get()
+
     topologies = Application.get_env(:libcluster, :topologies) || []
 
     children = [
+      {FLAME.Pool, name: GigalixirFlameExample.FlameWorker, min: 0, max: 10, max_concurrency: 5, idle_shutdown_after: 20},
       GigalixirFlameExampleWeb.Telemetry,
-      {Cluster.Supervisor, [topologies, [name: GigalixirFlameExample.ClusterSupervisor]]},
+      !flame_parent && {Cluster.Supervisor, [topologies, [name: GigalixirFlameExample.ClusterSupervisor]]},
       {Phoenix.PubSub, name: GigalixirFlameExample.PubSub},
       # Start the Finch HTTP client for sending emails
-      {Finch, name: GigalixirFlameExample.Finch},
+      !flame_parent && {Finch, name: GigalixirFlameExample.Finch},
       # Start a worker by calling: GigalixirFlameExample.Worker.start_link(arg)
       # {GigalixirFlameExample.Worker, arg},
       # Start to serve requests, typically the last entry
-      GigalixirFlameExampleWeb.Endpoint
+      !flame_parent && GigalixirFlameExampleWeb.Endpoint
     ]
+    |> Enum.filter(& &1)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
