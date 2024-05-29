@@ -12,7 +12,7 @@ defmodule GigalixirFlameExample.Application do
     topologies = Application.get_env(:libcluster, :topologies) || []
 
     children = [
-      {FLAME.Pool, name: GigalixirFlameExample.FlameWorker, min: 0, max: 10, max_concurrency: 5, idle_shutdown_after: 5 * 60 * 1000},
+      {FLAME.Pool, name: GigalixirFlameExample.FlameWorker, min: 0, max: 10, max_concurrency: 5, idle_shutdown_after: 20_000},
       GigalixirFlameExampleWeb.Telemetry,
       !flame_parent && {Cluster.Supervisor, [topologies, [name: GigalixirFlameExample.ClusterSupervisor]]},
       {Phoenix.PubSub, name: GigalixirFlameExample.PubSub},
