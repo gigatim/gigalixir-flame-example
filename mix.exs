@@ -32,8 +32,7 @@ defmodule GigalixirFlameExample.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:flame, git: "https://github.com/gigatim/flame.git", branch: "rebase", override: true},
-      {:libcluster, "~> 3.3"},
+      {:flame_gigalixir_backend, "~> 0.1.0"},
       {:phoenix, "~> 1.7.11"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
